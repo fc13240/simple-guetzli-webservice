@@ -17,7 +17,7 @@
  */
 package de.speexx.guetzli.transformer;
 
-import de.speexx.guetzli.model.TransformationException;
+import de.speexx.guetzli.service.TransformationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -33,15 +33,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Transforms images with the <code>guetzli</code> command line tool JPG files.
  * @author sascha.kohlmann
  */
 public final class GuetzliTransformationProcessor {
     
-    private static Logger LOG = Logger.getLogger(GuetzliTransformationProcessor.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(GuetzliTransformationProcessor.class.getSimpleName());
 
     private static final String PATH_ENV_VARIABLE = "PATH";
-    private static final String GUETZLI_MAX_MEMORY = "4000";
+    private static final String GUETZLI_MAX_MEMORY = "6000";
     private static final String GUETZLI_CMD = "guetzli";
     
 
@@ -66,7 +66,7 @@ public final class GuetzliTransformationProcessor {
                     source.toString(),
                     target.toString());
         }
-        configureProcessBuilder(pb, true);
+        configureProcessBuilder(pb, true, source.getParent());
         
         executeProcess(pb, source, target);
     }
@@ -82,9 +82,9 @@ public final class GuetzliTransformationProcessor {
             LOG.log(Level.INFO, "Start external process to transform {0} to {1}", new Object[] {source, target});
             final Process p = AccessController.doPrivileged((PrivilegedExceptionAction<Process>) () -> pb.start());
             boolean finished = false;
-            for (int i = 0; i < 60; i++) { // Maximum of 5 minutes
+            for (int i = 0; i < timeoutTries(); i++) {
                 try {
-                    finished = p.waitFor(5, TimeUnit.SECONDS);
+                    finished = p.waitFor(timeoutValue(), timeoutUnit());
                     if (finished) {
                         break;
                     }
@@ -104,26 +104,30 @@ public final class GuetzliTransformationProcessor {
         }
     }
     
-    void configureProcessBuilder(final ProcessBuilder pb, final boolean redirectOutput) {
+    void configureProcessBuilder(final ProcessBuilder pb, final boolean redirectOutput, final Path targetPath) {
         assert pb != null;
+        assert targetPath != null;
 
-        final String path = AccessController.doPrivileged(new PrivilegedAction<String>() {
-            @Override
-            public String run() {
-                return System.getenv(PATH_ENV_VARIABLE);
-            }
-        });
+        final String path = AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getenv(PATH_ENV_VARIABLE));
         final Map<String, String> env = AccessController.doPrivileged((PrivilegedAction<Map<String,String>>) () -> pb.environment());
         env.put(PATH_ENV_VARIABLE, path);
 
         if (redirectOutput) {
-            final File log = new File(userHome() + File.separator + ".guetzli-processor.log");
+            final File log = new File(targetPath.toFile(), ".guetzli-processor.log");
             pb.redirectErrorStream(true);
             pb.redirectOutput(ProcessBuilder.Redirect.appendTo(log));
         }
     }
     
-    String userHome() {
-        return AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty("user.home"));
+    long timeoutValue() {
+        return 5;
+    }
+
+    TimeUnit timeoutUnit() {
+        return TimeUnit.SECONDS;
+    }
+    
+    long timeoutTries() {
+        return 180;
     }
 }

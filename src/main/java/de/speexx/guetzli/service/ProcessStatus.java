@@ -15,30 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.speexx.guetzli.model;
-
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Paths;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+package de.speexx.guetzli.service;
 
 /**
- *
+ * The status of the process.
  * @author sascha.kohlmann
  */
-public class ImageQualityIdentifierTest {
-    
-    @Disabled
-    @Test
-    public void fetchQuality() throws Exception {
-        final URL url = this.getClass().getResource("/public_domain.jpg");
-        final URI uri = url.toURI();
-        
-        final ImageQualityIdentifier iqi = new ImageQualityIdentifier();
-        final int quality = iqi.fetchQuality(Paths.get(uri));
-        
-        assertEquals(quality, 90);
-    }
+public enum ProcessStatus {
+    /** The image is correct uploaded and stored in the backend system. */
+    stored,
+    /** The uploaded image is enqueued to be transformed. */
+    waiting,
+    /** The uploaded image is in the transformation process. */
+    transforming,
+    /** The uploaded image was successfull transformed. */
+    transformed,
+    /** he transformation process failed for different reasons. */
+    failed;
 }

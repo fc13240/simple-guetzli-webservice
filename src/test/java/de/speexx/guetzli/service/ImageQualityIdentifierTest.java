@@ -17,14 +17,28 @@
  */
 package de.speexx.guetzli.service;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Paths;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
- * An unchecked exception indicating an {@link IOException} problem.
+ *
  * @author sascha.kohlmann
  */
-public class UncheckedIOException extends RuntimeException {
-    public UncheckedIOException(final IOException t) {
-        super(t);
+public class ImageQualityIdentifierTest {
+    
+    @Disabled
+    @Test
+    public void fetchQuality() throws Exception {
+        final URL url = this.getClass().getResource("/public_domain.jpg");
+        final URI uri = url.toURI();
+        
+        final ImageQualityIdentifier iqi = new ImageQualityIdentifier();
+        final int quality = iqi.fetchQuality(Paths.get(uri));
+        
+        assertEquals(quality, 90);
     }
 }

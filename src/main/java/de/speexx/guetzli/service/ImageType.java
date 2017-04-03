@@ -15,19 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.speexx.guetzli.model;
+package de.speexx.guetzli.service;
 
 /**
- *
+ * Describes the type of an image.
  * @author sascha.kohlmann
  */
 public enum ImageType {
-    
+
+    /** The type of JPEG images. */
     JPG("jpg", "image/jpeg"),
+    /** The type of PNG images. */
     PNG("png", "image/png");
     
-    private String postfix;
-    private String mimeType;
+    private final String postfix;
+    private final String mimeType;
     
     ImageType(final String postfix, final String mime) {
         assert postfix != null;
@@ -35,11 +37,19 @@ public enum ImageType {
         this.postfix = postfix;
         this.mimeType = mime;
     }
-    
+
+    /**
+     * Returns the file postfix. E.g. for JPEG images the value is <code>jpg</code>.
+     * @return the postfix. Always lower case.
+     */
     public String getPostfix() {
         return this.postfix;
     }
-    
+
+    /**
+     * The mime type (media type) of the image.
+     * @return the mime type. Always lower case.
+     */
     public String getMimeType() {
         return this.mimeType;
     }

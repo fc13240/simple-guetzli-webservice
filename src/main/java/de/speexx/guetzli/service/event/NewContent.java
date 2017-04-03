@@ -15,12 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.speexx.guetzli.model;
+package de.speexx.guetzli.service.event;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import javax.inject.Qualifier;
 
 /**
- *
+ * Qualifier for new content.
  * @author sascha.kohlmann
  */
-public enum ProcessStatus {
-    stored, waiting, transforming, transformed, failed;
-}
+@Qualifier
+@Target({METHOD, FIELD, PARAMETER, TYPE})
+@Retention(RUNTIME)
+public @interface NewContent {}

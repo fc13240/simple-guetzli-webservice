@@ -17,24 +17,32 @@
  */
 package de.speexx.guetzli.service;
 
+import java.security.PrivilegedAction;
+import java.util.Objects;
+
 /**
- *
+ * Simple support to secure getting values from {@link System#getProperty(java.lang.String)}.
  * @author sascha.kohlmann
  */
-public class UnsupportedTypeException extends Exception {
+final class GetProperty implements PrivilegedAction<String> {
+
+    private final String propertyName;
 
     /**
-     * Creates a new instance of <code>UnsupportedTypeException</code> without detail message.
+     * Creates a new instance with the name of the property to fetch.
+     * @param propertyName the name of the property.
+     * @throws NullPointerException if and only if <em>propertyName</em> is {@literal null}.
      */
-    public UnsupportedTypeException() {
+    public GetProperty(final String propertyName) {
+        this.propertyName = Objects.requireNonNull(propertyName);
     }
 
     /**
-     * Constructs an instance of <code>UnsupportedTypeException</code> with the specified detail message.
-     *
-     * @param msg the detail message.
+     * Returns the {@linkplain System#getProperty(java.lang.String) System property}.
+     * @return the value of the property of {@literal null}.
      */
-    public UnsupportedTypeException(final String msg) {
-        super(msg);
+    @Override
+    public String run() {
+        return System.getProperty(this.propertyName);
     }
 }

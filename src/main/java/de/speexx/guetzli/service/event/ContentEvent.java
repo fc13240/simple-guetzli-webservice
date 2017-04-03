@@ -18,23 +18,27 @@
 package de.speexx.guetzli.service.event;
 
 /**
- *
+ * An event for an image containig a content ID.
  * @author sascha.kohlmann
  */
-public final class ImageEvent {
+public final class ContentEvent {
 
-    private final String id;
-    
-    public ImageEvent(final String imageId) {
-        this.id = imageId;
+    private final String contentId;
+
+    /**
+     * Creates a new instance.
+     * @param contentId a content ID
+     */
+    public ContentEvent(final String contentId) {
+        this.contentId = contentId;
     }
 
-    public String getImageId() {
-        return this.id;
+    public String getContentId() {
+        return this.contentId;
     }
 
     @Override
     public String toString() {
-        return "ImageEvent{" + "id=" + id + '}';
+        return "ImageEvent{" + "contentId=" + contentId + '}';
     }
 }

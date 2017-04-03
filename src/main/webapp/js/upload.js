@@ -27,13 +27,12 @@ function sendFile() {
     
     var file = document.getElementById("filechooser").files[0];
     console.log("FILE: " + file.name);
-    var extension = file.name.split(".").pop();
-    
+    var extension = file.name.split(".").pop().toLowerCase();
+
     var type;
-    if (extension === "jpg" || extension === "jpeg" ||
-        extension === "JPG" || extension === "JPEG") {
+    if (extension === "jpg" || extension === "jpeg") {
         type = "image/jpeg";
-    } else if (extension === "png" || extension === "PNG") {
+    } else if (extension === "png") {
         type = "image/png";
     } else {
         document.getElementById("status").innerHTML = "Invalid file type";

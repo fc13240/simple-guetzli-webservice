@@ -15,10 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.speexx.guetzli.model;
+package de.speexx.guetzli.service;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
@@ -33,7 +32,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Fetche the quality level for the image. Only checks images of type <code>image/jpeg</code>. Image quality level
+ * of type <code>image/png</code> are always 100.
+ * <p>This implementation requires an installed <a href='http://www.imagemagick.org/'>imagemagick</a>.</p>
  * @author sascha.kohlmann
  */
 final class ImageQualityIdentifier {
@@ -42,6 +43,13 @@ final class ImageQualityIdentifier {
 
     private static final String PATH_ENV_VARIABLE = "PATH";
 
+    /**
+     * Fetch the quality level.
+     * @param sourcePath the path to the source file.
+     * @return the quality level
+     * @throws IOException if and only if it is not possible to load the image.
+     * @throws NulllPointerException if <em>sourcePath</em> is {@code null}.
+     */
     public int fetchQuality(final Path sourcePath) throws IOException {
         final String path = sourcePath.toString();
 
@@ -80,23 +88,8 @@ final class ImageQualityIdentifier {
     void configureProcessBuilder(final ProcessBuilder pb, final boolean redirectOutput) {
         assert pb != null;
 
-        final String path = AccessController.doPrivileged(new PrivilegedAction<String>() {
-            @Override
-            public String run() {
-                return System.getenv(PATH_ENV_VARIABLE);
-            }
-        });
+        final String path = AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getenv(PATH_ENV_VARIABLE));
         final Map<String, String> env = AccessController.doPrivileged((PrivilegedAction<Map<String,String>>) () -> pb.environment());
         env.put(PATH_ENV_VARIABLE, path);
-
-        if (redirectOutput) {
-            final File log = new File(userHome() + File.separator + ".guetzli-processor.log");
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(log));
-        }
-    }
-
-    String userHome() {
-        return AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty("user.home"));
     }
 }

@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.speexx.guetzli.service;
+package de.speexx.guetzli.api;
 
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
- *
+ * Configuration of the REST API implementation.
  * @author sascha.kohlmann
  */
 @ApplicationPath("api")
@@ -41,7 +41,7 @@ public class ApplicationConfiguration extends Application {
      * all resources defined in the project.
      * If required, comment out calling this method in getClasses().
      */
-    private void addRestResourceClasses(final Set<Class<?>> resources) {
-        resources.add(GuetzliResource.class);
+    private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(de.speexx.guetzli.api.GuetzliResource.class);
     }
 }

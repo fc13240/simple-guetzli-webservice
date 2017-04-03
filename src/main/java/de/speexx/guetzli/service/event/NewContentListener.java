@@ -15,11 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.speexx.guetzli.transformer;
+package de.speexx.guetzli.service.event;
 
-import de.speexx.guetzli.model.ImageService;
-import de.speexx.guetzli.service.event.ImageEvent;
-import de.speexx.guetzli.service.event.NewImage;
+import de.speexx.guetzli.service.ImageService;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -29,24 +28,31 @@ import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 
 /**
- *
+ * Event listeer for new content.
  * @author sascha.kohlmann
  */
 @Stateless
-public class NewImageListener {
+public class NewContentListener {
     
-    private static Logger LOG = Logger.getLogger(NewImageListener.class.getSimpleName());
+    private static Logger LOG = Logger.getLogger(NewContentListener.class.getSimpleName());
     
     @Resource private ManagedExecutorService managedExecutorService;
     @Inject private ImageService imgSrv;
 
+    /**
+     * Asynchronous handler for new content.
+     * @param imageEvent new content event.
+     */
     @Asynchronous
-    public void newImage(final @NewImage @Observes ImageEvent imageEvent) {
+    public void newImage(final @NewContent @Observes ContentEvent imageEvent) {
         if (imageEvent == null) {
             return;
         }
 
-        final String id = imageEvent.getImageId();
-        this.managedExecutorService.execute(() -> NewImageListener.this.imgSrv.transformToGuetzli(id));
+        final String contentId = imageEvent.getContentId();
+        if (contentId != null) {
+            this.managedExecutorService.execute(() -> NewContentListener.this.imgSrv.transformToGuetzli(contentId));
+            LOG.log(Level.INFO, "Enqueued guetzli transformation for content ID {0}", contentId);
+        }
     }
 }

@@ -15,23 +15,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.speexx.guetzli.service.event;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import javax.inject.Qualifier;
+package de.speexx.guetzli.api;
 
 /**
  *
  * @author sascha.kohlmann
  */
-@Qualifier
-@Target({METHOD, FIELD, PARAMETER, TYPE})
-@Retention(RUNTIME)
-public @interface NewImage {}
+public class UnsupportedTypeException extends Exception {
+
+    /**
+     * Creates a new instance of <code>UnsupportedTypeException</code> without detail message.
+     */
+    public UnsupportedTypeException() {
+    }
+
+    /**
+     * Constructs an instance of <code>UnsupportedTypeException</code> with the specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public UnsupportedTypeException(final String msg) {
+        super(msg);
+    }
+}
